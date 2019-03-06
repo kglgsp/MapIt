@@ -1,5 +1,4 @@
 import tweepy
-import sys
 import time
 import json
 
@@ -14,19 +13,17 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
-tweet_file = open('tweets.json', 'a')
-
-
-class myStreamListener(tweepy.StreamListener):
+class StreamListener(tweepy.StreamListener):
     def __init__(self, api):
         self.api = api
         super(tweepy.StreamListener, self).__init__()
-        self.tweet = []
+        tweet = []
+        tweet_file = open('tweets.json', 'a')
 
     def on_data(self, tweet):
-        tweet_file.append(json.loads(tweet))
+        self.tweet_file.append(json.loads(tweet))
         print(tweet)
-        tweet_file.write(str(tweet))
+        self.tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
         print("ERROR STATUS CODE: " + status_code)
@@ -40,6 +37,9 @@ class myStreamListener(tweepy.StreamListener):
     #def on_status(self, status):
 
 
-# filter for location
-sapi = tweepy.streaming.Stream(auth, myStreamListener())
-sapi.filter(locations=[103.60998,1.25752,104.03295,1.44973], track=['twitter'])
+# filter by geolocation
+LOCATIONS = [103.60998,1.25752,104.03295,1.44973]
+
+stream_listener = StreamListener(api=tweepy.API(wait_on_rate_limit=True))
+stream = tweepy.Stream(auth=auth, listener=stream_listener)
+stream.filter(locations=LOCATIONS)
