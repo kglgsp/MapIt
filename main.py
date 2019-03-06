@@ -1,7 +1,7 @@
 import tweepy
 import time
 import json
-
+import geocoder
 consumer_token = '33vZHXkQiOjJMdhybWEVyry2T'
 consumer_secret = 'lqd1cG4Jm28xh3c8NqANvar0f8duc9eGMx1D5GbDCnOj8zu7iE'
 
@@ -18,14 +18,16 @@ class StreamListener(tweepy.StreamListener):
         self.api = api
         super(tweepy.StreamListener, self).__init__()
         tweet = []
-        tweet_file = open('tweets.json', 'a')
+        self.tweet_file = open('tweets.json', 'a')
 
     def on_data(self, tweet):
-        self.tweet_file.append(json.loads(tweet))
+        #self.tweet_file.append(json.loads(tweet))
         print(tweet)
         self.tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
+        if status == 420:
+            return False
         print("ERROR STATUS CODE: " + status_code)
         return True
 
@@ -38,8 +40,22 @@ class StreamListener(tweepy.StreamListener):
 
 
 # filter by geolocation
-LOCATIONS = [103.60998,1.25752,104.03295,1.44973]
 
-stream_listener = StreamListener(api=tweepy.API(wait_on_rate_limit=True))
-stream = tweepy.Stream(auth=auth, listener=stream_listener)
-stream.filter(locations=LOCATIONS)
+
+def main():
+    
+
+    g = geocoder.ip('me')
+    currentLocation = g.latlng
+    LOCATIONS = [currentLocation[1]-1.5,currentLocation[0]-1.5,currentLocation[1]+1.5,currentLocation[0]+1.5]
+
+    stream_listener = StreamListener(api=tweepy.API(wait_on_rate_limit=True))
+    stream = tweepy.Stream(auth=auth, listener=stream_listener)
+    stream.filter(locations=LOCATIONS)
+
+    return 0
+
+if __name__ == "__main__":
+    main()
+
+

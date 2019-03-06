@@ -1,0 +1,6 @@
+#!/bin/bash
+
+pip install tweepy
+pip install pandas
+pip install numpy
+pip install geocoder
