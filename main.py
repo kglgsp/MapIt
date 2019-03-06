@@ -14,21 +14,32 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
-class myStreamListener(tweepy.StreamListener):
+tweet_file = open('tweets.json', 'a')
 
-    def on_status(self, status):
-        print(status.text)
+
+class myStreamListener(tweepy.StreamListener):
+    def __init__(self, api):
+        self.api = api
+        super(tweepy.StreamListener, self).__init__()
+        self.tweet = []
+
+    def on_data(self, tweet):
+        tweet_file.append(json.loads(tweet))
+        print(tweet)
+        tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
-        if status_code == 420:
-            #returning False in on-data disconnects the stream
-        return False
+        print("ERROR STATUS CODE: " + status_code)
+        return True
 
     def on_timeout(self):
+        print("ERROR TIMEOUT")
         time.sleep(60)
-        return
+        return True
 
-    def on_limit(self, status_code):
-        return False
+    #def on_status(self, status):
 
 
+# filter for location
+sapi = tweepy.streaming.Stream(auth, myStreamListener())
+sapi.filter(locations=[103.60998,1.25752,104.03295,1.44973], track=['twitter'])
