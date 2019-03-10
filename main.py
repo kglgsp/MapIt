@@ -2,8 +2,14 @@ import tweepy
 import time
 import json
 import geocoder
+
 from urllib import urlopen
 from bs4 import BeautifulSoup
+
+
+
+import pandas as pd
+pd.options.mode.chained_assignment = None
 
 consumer_token = '33vZHXkQiOjJMdhybWEVyry2T'
 consumer_secret = 'lqd1cG4Jm28xh3c8NqANvar0f8duc9eGMx1D5GbDCnOj8zu7iE'
@@ -16,17 +22,131 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
+
+def getTitle(url):
+    u = urlopen(url)
+    title = BeautifulSoup(u, 'html.parser').title
+    return title
+
 class StreamListener(tweepy.StreamListener):
     def __init__(self, api):
         self.api = api
         super(tweepy.StreamListener, self).__init__()
-        tweet = []
+
+
         self.tweet_file = open('tweets.json', 'a')
+        self.tweetList = []
+        self.fileCount = 1
+        self.importantColumns = {"text": 1,
+                "full_name" : 1,
+                "id": 1,
+                "entities": 1,
+                "favorite_count": 1,
+                "retweet_count": 1,
+                "timestamp_ms": 1,
+                "user": 1,
+                "extended_text": 1,
+                "created_at": 1,
+                "place" : 1 }
+
 
     def on_data(self, tweet):
         #self.tweet_file.append(json.loads(tweet))
-        print(tweet)
-        self.tweet_file.write(str(tweet))
+        print("===TWEET TEXT===")
+        theTweet = json.loads(tweet)
+        
+        '''
+        for key in theTweet.keys():
+            if key not in self.importantColumns:
+                theTweet.pop(key,None)
+
+        titleList = []
+        if len(theTweet['entities'][u'urls']) > 0:
+            titleList = []
+            for eachURL in theTweet['entities'][u'urls']:
+                titleList.append(getTitle(eachURL[u'expanded_url']))
+
+        theTweet['title'] = titleList
+
+        theTweet = json.dumps(theTweet)
+        self.tweetList.append(theTweet)
+        if self.tweetList > 5: 
+            self.tweet_file.write(theTweet)
+        '''
+        
+        
+        try:
+            importantColumns = [theTweet['text' ] ,
+                    theTweet['id' ],
+                    theTweet['entities'][u'urls'] ,
+                    theTweet['favorite_count'], 
+                    theTweet['retweet_count'],
+                    theTweet['timestamp_ms'] ,
+                    theTweet['user'][u'profile_image_url'], 
+                    theTweet['user'][u'screen_name'], 
+                    theTweet ['extended_text'] , 
+                    theTweet['created_at'] , 
+                    theTweet['place'][u'full_name'] , 
+                    theTweet['place'][u'bounding_box'][u'coordinates'] ]
+        except KeyError:
+            importantColumns = [theTweet['text' ] , 
+                    theTweet['id' ], 
+                    theTweet['entities'][u'urls'] , 
+                    theTweet['favorite_count'], 
+                    theTweet['retweet_count'], 
+                    theTweet['timestamp_ms'] , 
+                    theTweet['user'][u'profile_image_url'], 
+                    theTweet['user'][u'screen_name'], 
+                    None , 
+                    theTweet['created_at'], 
+                    theTweet['place'][u'full_name'] , 
+                    theTweet['place'][u'bounding_box'][u'coordinates'] ]
+        
+        self.tweetList.append(importantColumns)
+        
+        if len(self.tweetList) >= 3:
+            
+            self.tweetFrame = pd.DataFrame(self.tweetList,columns =  ["[text]",
+                "[id]",
+                "urls",
+                "[favorite_count]",
+                "[retweet_count]",
+                "[timestamp_ms]",
+                "[user][u'profile_image_url']",
+                "[user][u'screen_name']",
+                "[extended_text]",
+                "[created_at]",
+                "[place][u'full_name]",
+                "[place][u'bounding_box']"]) 
+       
+            self.tweetFrame['titles'] = None
+
+            for index, row in self.tweetFrame.iterrows():
+                
+                print("row url: ", row['urls'])
+                if len(row['urls']) > 0:
+                    
+                    titleList = []
+                    for eachURL in row['urls']:
+                        #print("eachURL: " , eachURL)
+                        #print("eachURL[u'url']: ", eachURL[u'expanded_url'])
+
+                        title = getTitle(eachURL[u'expanded_url'])
+                        print("TITLE: ", title)
+                        titleList.append(title)
+                    self.tweetFrame.at[index, 'titles'] = self.tweetList
+            
+            self.tweetList = []
+            out = self.tweetFrame.to_json(orient = 'records')[1:-1].replace('},{', '} {')
+            self.tweet_file.write(out)
+
+
+            
+
+
+
+
+        #self.tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
         if status_code == 420:
@@ -40,16 +160,13 @@ class StreamListener(tweepy.StreamListener):
         return True
 
 
-def getTitle(url):
-    u = urlopen(url)
-    title = BeautifulSoup(u, 'html.parser').title
-    print(title)
-
-
 def main():
+
     g = geocoder.ip('me')
     currentLocation = g.latlng
     LOCATIONS = [currentLocation[1]-1.5,currentLocation[0]-1.5,currentLocation[1]+1.5,currentLocation[0]+1.5]
+
+
 
     stream_listener = StreamListener(api=tweepy.API(wait_on_rate_limit=True))
     stream = tweepy.Stream(auth=auth, listener=stream_listener)
