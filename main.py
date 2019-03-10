@@ -104,7 +104,7 @@ class StreamListener(tweepy.StreamListener):
         
         self.tweetList.append(importantColumns)
         
-        if len(self.tweetList) >= 3:
+        if len(self.tweetList) >= 200:
             
             self.tweetFrame = pd.DataFrame(self.tweetList,columns =  ["[text]",
                 "[id]",
@@ -123,7 +123,7 @@ class StreamListener(tweepy.StreamListener):
 
             for index, row in self.tweetFrame.iterrows():
                 
-                print("row url: ", row['urls'])
+#                print("row url: ", row['urls'])
                 if len(row['urls']) > 0:
                     
                     titleList = []
@@ -132,7 +132,7 @@ class StreamListener(tweepy.StreamListener):
                         #print("eachURL[u'url']: ", eachURL[u'expanded_url'])
 
                         title = getTitle(eachURL[u'expanded_url'])
-                        print("TITLE: ", title)
+ #                       print("TITLE: ", title)
                         titleList.append(title)
                     self.tweetFrame.at[index, 'titles'] = self.tweetList
             #self.tweetFrame['json'] = self.tweetFrame.apply(lambda x: x.to_json(), axis=1) 
@@ -142,7 +142,7 @@ class StreamListener(tweepy.StreamListener):
             for eachjson in self.tweetFrame.to_json(orient = 'records', lines = True):
                 self.tweet_file.write(eachjson)
             self.tweet_file.write('\n')    
-                
+            print("WROTE TO FILE")              
     
 
 
