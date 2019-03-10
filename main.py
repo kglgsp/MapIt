@@ -135,10 +135,15 @@ class StreamListener(tweepy.StreamListener):
                         print("TITLE: ", title)
                         titleList.append(title)
                     self.tweetFrame.at[index, 'titles'] = self.tweetList
-            
+            #self.tweetFrame['json'] = self.tweetFrame.apply(lambda x: x.to_json(), axis=1) 
+
+            #self.tweetFrame.apply(lambda x: self.tweet_file.write(x['json'] + '\n'))
             self.tweetList = []
-            out = self.tweetFrame.to_json(orient = 'records')[1:-1].replace('},{', '} {')
-            self.tweet_file.write(out)
+            for eachjson in self.tweetFrame.to_json(orient = 'records', lines = True):
+                self.tweet_file.write(eachjson)
+                
+                
+    
 
 
             
