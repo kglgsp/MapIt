@@ -2,6 +2,9 @@ import tweepy
 import time
 import json
 import geocoder
+from urllib import urlopen
+from bs4 import BeautifulSoup
+
 consumer_token = '33vZHXkQiOjJMdhybWEVyry2T'
 consumer_secret = 'lqd1cG4Jm28xh3c8NqANvar0f8duc9eGMx1D5GbDCnOj8zu7iE'
 
@@ -26,25 +29,24 @@ class StreamListener(tweepy.StreamListener):
         self.tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
-        if status == 420:
+        if status_code == 420:
+            print("ERROR: Status Code: " + status_code)
             return False
-        print("ERROR STATUS CODE: " + status_code)
         return True
 
     def on_timeout(self):
-        print("ERROR TIMEOUT")
+        print("ERROR: Timeout")
         time.sleep(60)
         return True
 
-    #def on_status(self, status):
 
-
-# filter by geolocation
+def getTitle(url):
+    u = urlopen(url)
+    title = BeautifulSoup(u, 'html.parser').title
+    print(title)
 
 
 def main():
-    
-
     g = geocoder.ip('me')
     currentLocation = g.latlng
     LOCATIONS = [currentLocation[1]-1.5,currentLocation[0]-1.5,currentLocation[1]+1.5,currentLocation[0]+1.5]
