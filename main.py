@@ -141,7 +141,7 @@ class StreamListener(tweepy.StreamListener):
             self.tweetList = []
             for eachjson in self.tweetFrame.to_json(orient = 'records', lines = True):
                 self.tweet_file.write(eachjson)
-                
+            self.tweet_file.write('\n')    
                 
     
 
