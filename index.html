@@ -3,7 +3,26 @@
   <head>
     <title>C://Untitled: Twitter Geolocation</title>
     <script src="tweetToMap.js"></script>
-    <script type="text/javascript" src="tweets.json"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+      
+   <script>
+
+  // $.getJSON('tweets.json', function(data) {
+  //     console.log('It worked!')
+
+  // });
+    $.ajax({
+        url: 'tweets.json',
+        dataType: 'json',
+        type: 'get',
+        cache: false,
+        success: function(data){
+            console.log(data);
+        }
+    })   
+
+   </script>  
+      
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
