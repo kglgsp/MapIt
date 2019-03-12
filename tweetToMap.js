@@ -1,11 +1,11 @@
   function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 10
+        zoom: 9
       });
 
       var input = document.getElementById('pac-input');
       var searchBox = new google.maps.places.SearchBox(input);
-      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
       var geocode = new google.maps.Geocoder;
       var infoWindow = new google.maps.InfoWindow;
 
@@ -35,30 +35,20 @@
     });
 
     mainObj = {};
+    var arrayTweet = [];
 
     let showObj = function() {
       for (let prop in mainObj) {
         console.log(prop);
         console.log(mainObj[prop]);
-      };
-    }
-    fetch("./tweets.json")
-    .then(function(resp) {
-      return resp.json();
-    })
-
-    .then(function(data) {
-      mainObj = data;
-      showObj();
-
       addMarker({
-        coords:{lat:data.place.bounding_box.coordinates[0][1][1],lng:data.place.bounding_box.coordinates[0][1][0]},
+        coords:{lat:mainObj[prop].place.bounding_box.coordinates[0][1][1],lng:mainObj[prop].place.bounding_box.coordinates[0][1][0]},
         content:'<div id="content">'+
         '<div id="siteNotice">'+
         '</div>'+
-        '<h1 id="firstHeading" class="firstHeading">'+data.user.screen_name+'</h1>'+
+        '<b>'+mainObj[prop].user.screen_name+'</b>'+
         '<div id="bodyContent">'+
-        '<p>'+data.extended_tweet.full_text+'</p>'+
+        '<p>'+mainObj[prop].text+'</p>'+
         '</div>'+
         '</div>'
       });
@@ -83,6 +73,17 @@
         }
 
       }
+      };
+    }
+    fetch("./tweets.json")
+    .then(function(resp) {
+      return resp.json();
+    })
+
+    .then(function(data) {
+      mainObj = data;
+      showObj();
+
     });
 
     

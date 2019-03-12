@@ -9,6 +9,7 @@
        * element that contains the map. */
       #map {
         height: 100%;
+        width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -69,7 +70,7 @@
         margin-left: 12px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
-        width: 400px;
+        width: 50%;
       }
 
       #pac-input:focus {
@@ -93,7 +94,7 @@
   </head>
   <body>
     <div id="map"></div>
-    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <input id="pac-input" class="controls" type="text" placeholder="Search: ">
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtldAqm21TFhrjQ4QwJn_owlTgTl6IbMk&libraries=places&callback=initMap">
     </script>

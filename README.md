@@ -1,21 +1,21 @@
-##CS172:  Information Retrieval Final Project
-This project utilizes the Twitter Streaming API to collect and map geolocated tweets in Google Maps within 100 miles from user location.
+# CS172:  Information Retrieval Final Project
+This project utilizes the Twitter Streaming API to collect and map geolocated tweets within 100 miles from user location.
 
-**Team:** 🐦 C://Untitled 🐦
+### Team: 🐦 C://Untitled 🐦 
           Katherine Legaspi
           Kevin Frazier
           Nate Mueller
 
-###How to run:
+### How to run:
 
 
 
-###Design:
+### Design:
 
 
 
 
- ###Part 1 - Crawler
+ ### Part 1 - Crawler
  1. Collaborate Details:
  2. Overview of system
     (a) Architecture
@@ -25,7 +25,7 @@ This project utilizes the Twitter Streaming API to collect and map geolocated tw
  4. How to deploy the crawler
  5. Screenshots
 
- ###Part 2 - Indexer
+ ### Part 2 - Indexer
  1. Collaborate Details:
  2. Overview of system
     (a) Architecture
@@ -34,7 +34,7 @@ This project utilizes the Twitter Streaming API to collect and map geolocated tw
  3. Limitations 
  4. How to deploy the system
 
- ###Part 3 - Extension
+ ### Part 3 - Extension
  
 
         
