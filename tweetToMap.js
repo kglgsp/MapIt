@@ -3,9 +3,11 @@
         zoom: 9
       });
 
-      var input = document.getElementById('pac-input');
-      var searchBox = new google.maps.places.SearchBox(input);
-      map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      //var input = document.getElementById('pac-input');
+      //var searchBox = new google.maps.places.SearchBox(input);
+      //map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      //console.log(a)
+
       var geocode = new google.maps.Geocoder;
       var infoWindow = new google.maps.InfoWindow;
 
@@ -29,18 +31,13 @@
           handleLocationError(false, infoWindow, map.getCenter());
         }
 
-        // Bias the SearchBox results towards current map's viewport.
-    map.addListener('bounds_changed', function() {
-      searchBox.setBounds(map.getBounds());
-    });
-
     mainObj = {};
     var arrayTweet = [];
 
     let showObj = function() {
       for (let prop in mainObj) {
-        console.log(prop);
-        console.log(mainObj[prop]);
+        //console.log(prop);
+        //console.log(mainObj[prop]);
       addMarker({
         coords:{lat:mainObj[prop].place.bounding_box.coordinates[0][1][1],lng:mainObj[prop].place.bounding_box.coordinates[0][1][0]},
         content:'<div id="content">'+
@@ -53,6 +50,10 @@
         '</div>'
       });
 
+      // Removes the markers from the map, but keeps them in the array.
+      function clearMarkers() {
+        setMapOnAll(null);
+      }
 
       // Add Marker Function
       function addMarker(props){
@@ -97,4 +98,34 @@
       infoWindow.open(map);
   }
 
- 
+ function test() {
+   var query = document.getElementById("site-search").value
+    var data = {
+      query: {
+        bool: {
+          must: {
+            term: {text: query}
+          }
+        }
+      }
+    }
+    
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:9200/locations/_search",
+      crossDomain: true,  
+      async: false,
+      data: JSON.stringify(data),
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      dataType : 'jsonp',
+      contentType: 'application/json',
+    })
+    .done(function( data ) {
+      console.log(data);
+    })
+    .fail(function( data ) {
+      console.log(data);
+    });
+ }
