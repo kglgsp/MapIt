@@ -8,6 +8,7 @@ pip install elasticsearch-loader
 
 ## Mapping for geo_points
 -do this before indexing any data so that elastic search can read geo_points
+```
 curl -H "Content-Type: application/json" -XPUT "http://localhost:9200/index" -d \
 '{
     "mappings": {
@@ -20,17 +21,25 @@ curl -H "Content-Type: application/json" -XPUT "http://localhost:9200/index" -d 
         }
     }
 }'
+```
 
 ## index the json file:
+```
 elasticsearch_loader --index index --type tweet json fixedTweets2.json
+```
 
 ## delete entire index
+```
 curl -X DELETE 'http://localhost:9200/_all'
+```
 
 ## Basic Search Query:
+```
 curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_search" -d'{"query":{"query_string":{"query":"relate"}}}'
+```
 
 ## search for everything in english language
+```
 curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_search" -d \
 '{
   "query": {
@@ -42,10 +51,11 @@ curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_se
       }
     }
   }
-}' >> q.json
+}' 
+```
 
-## Search everything within 200 km of (34.05998,-118.165119) that has term 'bedroom'
-
+## Search everything within 200 km of (34.05998,-118.165119)
+```
 curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_search" -d \
 '{
   "query": {
@@ -61,4 +71,5 @@ curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_se
           }
       }
   }
-}' >> q.json
+}' 
+```
