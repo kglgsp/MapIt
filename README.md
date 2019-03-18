@@ -8,8 +8,10 @@ This project utilizes the Twitter Streaming API to collect and map geolocated tw
 
 ## How to run:
 
+Set up for Part 1 - Twitter Stream: In order to run the stream you need to run the following command:
+	python main.py
 
-
+After the stream is done or the stream is kicked, a sampleTweets.json will be outputted with the tweets.
 
 Set up for Part 3 - Extension: Follow the README setup in the elastic folder. When running the curl command, add '>> q.json'.
 This will create a json file with an output of the relevant query. 
@@ -21,7 +23,7 @@ TweetToMap.js will read in the 'q.json' file and add marker/s to the relevant tw
 
 ## What's included:
 
-      sampleTweets.json - 1GB of twitter data
+      sampleTweets.json - 1GB of twitter data (We pushed a sample of the tweets <20 MB)
       index.html & tweetToMap.js -  UI framework
 
  ## Part 1 - Crawler
