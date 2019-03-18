@@ -3,11 +3,6 @@
         zoom: 9
       });
 
-      //var input = document.getElementById('pac-input');
-      //var searchBox = new google.maps.places.SearchBox(input);
-      //map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-      //console.log(a)
-
       var geocode = new google.maps.Geocoder;
       var infoWindow = new google.maps.InfoWindow;
 
@@ -36,16 +31,17 @@
 
     let showObj = function() {
       for (let prop in mainObj) {
-        //console.log(prop);
-        //console.log(mainObj[prop]);
+
       addMarker({
-        coords:{lat:mainObj[prop].place.bounding_box.coordinates[0][1][1],lng:mainObj[prop].place.bounding_box.coordinates[0][1][0]},
+        coords:{lat:mainObj[prop]["_source"]["coordinates"]["lat"],
+                lng:mainObj[prop]["_source"]["coordinates"]["lon"]},
         content:'<div id="content">'+
         '<div id="siteNotice">'+
         '</div>'+
-        '<b>'+mainObj[prop].user.screen_name+'</b>'+
+        '<b>'+mainObj[prop]["_source"]["screen_name"]+'</b>'+
         '<div id="bodyContent">'+
-        '<p>'+mainObj[prop].text+'</p>'+
+        '<p>'+mainObj[prop]["_source"]["text"]+'</p>'+
+        '<p>'+mainObj[prop]["_score"]+'</p>'+
         '</div>'+
         '</div>'
       });
@@ -76,18 +72,16 @@
       }
       };
     }
-    fetch("./tweets.json")
+    fetch("./q.json")
     .then(function(resp) {
       return resp.json();
     })
 
     .then(function(data) {
-      mainObj = data;
+      mainObj = data["hits"]["hits"];
+      console.log(mainObj)
       showObj();
-
     });
-
-    
   }
 
   function handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -97,35 +91,31 @@
                             'Error: Your browser doesn\'t support geolocation.');
       infoWindow.open(map);
   }
+  
 
- function test() {
-   var query = document.getElementById("site-search").value
-    var data = {
-      query: {
-        bool: {
-          must: {
-            term: {text: query}
-          }
-        }
-      }
-    }
-    
-    $.ajax({
-      type: "POST",
-      url: "http://localhost:9200/locations/_search",
-      crossDomain: true,  
-      async: false,
-      data: JSON.stringify(data),
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      dataType : 'jsonp',
-      contentType: 'application/json',
-    })
-    .done(function( data ) {
-      console.log(data);
-    })
-    .fail(function( data ) {
-      console.log(data);
-    });
- }
+//   function test() {
+//     var query = document.getElementById("site-search").value
+
+//      var data = {
+//        query: {
+//          bool: {
+//            must: {
+//              term: {text: query}
+//            }
+//          }
+//        }
+//      }
+ 
+//      $.ajax({
+//        type: "POST",
+//        url: "http://localhost:9200/locations/_search",
+//        data: JSON.stringify(data),
+//        contentType: 'application/json',
+//      })
+//      .done(function( data ) {
+//        console.log(data);
+//      })
+//      .fail(function( data ) {
+//        console.log(data);
+//      });
+//  }
