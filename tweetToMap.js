@@ -94,29 +94,45 @@
   }
   
 
-//   function test() {
-//     var query = document.getElementById("site-search").value
+  function test() {
 
-//      var data = {
-//        query: {
-//          bool: {
-//            must: {
-//              term: {text: query}
-//            }
-//          }
-//        }
-//      }
+    var query = document.getElementById("site-search").value
+    console.log(query)
+
+    //  var data = {
+    //    query: {
+    //      bool: {
+    //        must: {
+    //          term: {text: query}
+    //        }
+    //      }
+    //    }
+    //  }
  
-//      $.ajax({
-//        type: "POST",
-//        url: "http://localhost:9200/locations/_search",
-//        data: JSON.stringify(data),
-//        contentType: 'application/json',
-//      })
-//      .done(function( data ) {
-//        console.log(data);
-//      })
-//      .fail(function( data ) {
-//        console.log(data);
-//      });
-//  }
+    //  $.ajax({
+    //    type: "GET",
+    //    url: "http://localhost:9200/locations/_search",
+    //    data: JSON.stringify(data),
+    //    contentType: 'application/json',
+    //  })
+    //  .done(function( data ) {
+    //    console.log(data);
+    //  })
+    //  .fail(function( data ) {
+    //    console.log(data);
+    //  });
+
+    var elasticsearch = require('elasticsearch');
+    var results = elasticClient.search( {
+      index: 'movies',
+      type: 'movie',
+      body: {
+        query: {
+          match: {"title": "Star Wars"}
+        }}}).then (function (resp) {
+            console.log(resp);
+        hits = resp.hits.hits;
+        }, function (err) {
+      console.trace(err.message);
+    });
+  }
