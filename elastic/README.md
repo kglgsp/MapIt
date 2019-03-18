@@ -25,7 +25,7 @@ curl -H "Content-Type: application/json" -XPUT "http://localhost:9200/index" -d 
 
 ## index the json file:
 ```
-elasticsearch_loader --index index --type tweet json fixedTweets2.json
+elasticsearch_loader --index index --type tweet json [file with your tweets]
 ```
 
 ## delete entire index
