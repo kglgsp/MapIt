@@ -26,9 +26,7 @@ api = tweepy.API(auth)
 
 count = 0
 def getUrl(string):
-    # findall() has been used with valid conditions for urls in string 
 	url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', string) 
-	# print url
 	return url
 
 # looks for hashtag in tweet content
@@ -66,24 +64,11 @@ class StreamListener(tweepy.StreamListener):
         '''
 
     def on_data(self, tweet):
-        #self.tweet_file.append(json.loads(tweet))
 
         print("tweet")
-        
-
-
-
 
         theTweet = json.loads(tweet) #make into dict type
         print("text: ", theTweet["text"])
-
-
- #       theTweet["[text]"] = theTweet["text"]
-
-
-
-
-
         
         theTweet["coordinates"] = theTweet["place"]["bounding_box"]["coordinates"]
         theDict = {}
@@ -91,39 +76,14 @@ class StreamListener(tweepy.StreamListener):
         theDict["lon"] = theTweet["coordinates"][0][1][0]
         theTweet["coordinates"] = theDict
 
-    
-#        theTweet["id"] = theTweet["[id]"]
-            
- #       theTweet["favorite_count"] = theTweet["[favorite_count]"]
- #       theTweet["retweet_count"] = theTweet["[retweet_count]"]
-#        theTweet["timestamp"] = theTweet["[timestamp_ms]"]
         theTweet["profile_image"] = theTweet["user"][u'profile_image_url']
         theTweet["screen_name"] = theTweet["user"][u'screen_name']
-#        theTweet["extended_text"] = theTweet["[extended_text]"]
-#        theTweet["created_at"] = theTweet["[created_at]"]
         theTweet["location"] = theTweet["place"]["full_name"]
- 
-
-        
-
-
     
         theTweet['title'] = GetUrlTitles(theTweet["text"])
 
-        
-        #theTweet['title'] = []
-
-
-
-
-
         theTweet = json.dumps(theTweet)
-        
-        
-#        theTweet["[id]"] = theTweet["id"]
-
-        
-       
+             
         self.tweet_file.write(theTweet + ",\n")
 
 
@@ -217,15 +177,6 @@ class StreamListener(tweepy.StreamListener):
             self.tweet_file.write('\n')    
             print("WROTE TO FILE")              
             '''
-    
-
-
-            
-
-
-
-
-        #self.tweet_file.write(str(tweet))
 
     def on_error(self, status_code):
         if status_code == 420:
