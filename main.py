@@ -1,11 +1,13 @@
 import tweepy
-import time
+#import time
 import json
 import geocoder
 
-from urllib import urlopen
-from bs4 import BeautifulSoup
-
+#from urllib import urlopen
+#from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
+import urllib2
+import re
 
 
 import pandas as pd
@@ -22,11 +24,23 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
+count = 0
+def getUrl(string):
+    # findall() has been used with valid conditions for urls in string 
+	url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', string) 
+	# print url
+	return url
 
-def getTitle(url):
-    u = urlopen(url)
-    title = BeautifulSoup(u, 'html.parser').title
-    return title
+# looks for hashtag in tweet content
+def GetUrlTitles(string):
+	urls = getUrl(string);
+	urlTitles = []
+	if urls:
+		for url in urls:
+			soup = BeautifulSoup(urllib2.urlopen(url))
+			urlTitles.append(soup.title.string)
+	return urlTitles
+
 
 class StreamListener(tweepy.StreamListener):
     def __init__(self, api):
@@ -34,9 +48,10 @@ class StreamListener(tweepy.StreamListener):
         super(tweepy.StreamListener, self).__init__()
 
 
-        self.tweet_file = open('tweets.json', 'a')
+        self.tweet_file = open('sampleTweets.json', 'a')
         self.tweetList = []
         self.fileCount = 1
+        '''
         self.importantColumns = {"text": 1,
                 "full_name" : 1,
                 "id": 1,
@@ -48,13 +63,71 @@ class StreamListener(tweepy.StreamListener):
                 "extended_text": 1,
                 "created_at": 1,
                 "place" : 1 }
-
+        '''
 
     def on_data(self, tweet):
         #self.tweet_file.append(json.loads(tweet))
-        print("===TWEET TEXT===")
-        theTweet = json.loads(tweet)
+
+        print("tweet")
         
+
+
+
+
+        theTweet = json.loads(tweet) #make into dict type
+        print("text: ", theTweet["text"])
+
+
+ #       theTweet["[text]"] = theTweet["text"]
+
+
+
+
+
+        
+        theTweet["coordinates"] = theTweet["place"]["bounding_box"]["coordinates"]
+        theDict = {}
+        theDict["lat"] = theTweet["coordinates"][0][1][1]
+        theDict["lon"] = theTweet["coordinates"][0][1][0]
+        theTweet["coordinates"] = theDict
+
+    
+#        theTweet["id"] = theTweet["[id]"]
+            
+ #       theTweet["favorite_count"] = theTweet["[favorite_count]"]
+ #       theTweet["retweet_count"] = theTweet["[retweet_count]"]
+#        theTweet["timestamp"] = theTweet["[timestamp_ms]"]
+        theTweet["profile_image"] = theTweet["user"][u'profile_image_url']
+        theTweet["screen_name"] = theTweet["user"][u'screen_name']
+#        theTweet["extended_text"] = theTweet["[extended_text]"]
+#        theTweet["created_at"] = theTweet["[created_at]"]
+        theTweet["location"] = theTweet["place"]["full_name"]
+ 
+
+        
+
+
+    
+        theTweet['title'] = GetUrlTitles(theTweet["text"])
+
+        
+        #theTweet['title'] = []
+
+
+
+
+
+        theTweet = json.dumps(theTweet)
+        
+        
+#        theTweet["[id]"] = theTweet["id"]
+
+        
+       
+        self.tweet_file.write(theTweet + ",\n")
+
+
+
         '''
         for key in theTweet.keys():
             if key not in self.importantColumns:
@@ -74,7 +147,7 @@ class StreamListener(tweepy.StreamListener):
             self.tweet_file.write(theTweet)
         '''
         
-        
+        '''
         try:
             importantColumns = [theTweet['text' ] ,
                     theTweet['id' ],
@@ -143,6 +216,7 @@ class StreamListener(tweepy.StreamListener):
                 self.tweet_file.write(eachjson)
             self.tweet_file.write('\n')    
             print("WROTE TO FILE")              
+            '''
     
 
 
