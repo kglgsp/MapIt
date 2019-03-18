@@ -79,6 +79,10 @@ At first, a pandas dataframe was used to check for duplicates, and process all t
  Run the twitter stream. The crawler runs concurrently with the twitter stream.
 
  5. Screenshots
+ 
+ ![map](pandas.png)
+ 
+ Here is the stream. Some print statements suggests the extraction of the title from their url that is embedded from the text.
 
  ## Part 2 - Indexer
  1. Collaborate Details: Nate Mueller 
@@ -109,3 +113,4 @@ Tools: Google Maps API
 This map image example runs the query word: "like" in a 1000km radius from user location
 ![map](runMap.png)
 ![map](map.png)
+
