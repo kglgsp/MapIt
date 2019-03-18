@@ -27,23 +27,54 @@ TweetToMap.js will read in the 'q.json' file and add marker/s to the relevant tw
  ## Part 1 - Crawler
  1. Collaborate Details: 
 
-   Kevin Frazier: Implemented twitter stream..etc
+   Kevin Frazier: Implemented twitter stream, getURLTitles()
 
-   Katherine Legaspi: Set up Twitter API keys, basic myStreamListener, and getTitle() function that takes in a url and returns the title of the website
-
+   Katherine Legaspi: Set up Twitter API keys, basic myStreamListener
+   
  2. Overview of system
 
     (a) Architecture
+          The architecture of the project is pretty straight forward. We first get the filter for our twitter stream using the "geocoder" library. This looks at the IP.address of the user and grabs the coordinates at the address.
+         
+         g = geocoder.ip('me')
+         currentLocation = g.latlng
+         LOCATIONS = [currentLocation[1]-1.5,currentLocation[0]-1.5,currentLocation[1]+1.5,currentLocation[0]+1.5]
+         
+    In order to use the api, we must initialize the twitter api with the given consumer and access keys. Then, we can initialize the twitter streamer with the given filters based off of location.
+    
+          stream_listener = StreamListener(api=tweepy.API(wait_on_rate_limit=True))
+          stream = tweepy.Stream(auth=auth, listener=stream_listener)
+          stream.filter(locations=LOCATIONS)
+In this SteamListener class, we have function ondata() that will call everytime a tweet is received in JSON format. These tweets are then processed by adding fields to format for Elastic Search. Below is a screen shot of the filtered tweets being received.         
+         
 
     (b) The Crawling or data collection strategy
+    
+The crawling of the data happens whenever we receive a tweet. The function getUrlTitles() will look "text" field of the tweet, use regex to find any urls, then uses a combination of urllib2 and BeautifulSoup access the html of the link and parse the title. Below is the code for the function.
+
+          def GetUrlTitles(string):
+	          urls = getUrl(string);
+	          urlTitles = []
+	          if urls:
+		          for url in urls:
+			          soup = BeautifulSoup(urllib2.urlopen(url))
+			          urlTitles.append(soup.title.string)
+	          return urlTitles
+
 
     (c) Data Structures employed
+    
+At first, a pandas dataframe was used to check for duplicates, and process all the tweets after they were collected (such as reformatting for ElasticSearch, crawling, etc). Although, this was eventually moved to the stream process.
 
  3. Limitations 
 
       Limitations includes
+      -slow one-processor stream with delays from Crawler
+      
+      
 
  4. How to deploy the crawler
+ Run the twitter stream. The crawler runs concurrently with the twitter stream.
 
  5. Screenshots
 
