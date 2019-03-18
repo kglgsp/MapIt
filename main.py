@@ -75,13 +75,14 @@ class StreamListener(tweepy.StreamListener):
         theDict["lat"] = theTweet["coordinates"][0][1][1]
         theDict["lon"] = theTweet["coordinates"][0][1][0]
         theTweet["coordinates"] = theDict
+	
 
         theTweet["profile_image"] = theTweet["user"][u'profile_image_url']
         theTweet["screen_name"] = theTweet["user"][u'screen_name']
         theTweet["location"] = theTweet["place"]["full_name"]
     
         theTweet['title'] = GetUrlTitles(theTweet["text"])
-
+	print("url titles", theTweet['title'])
         theTweet = json.dumps(theTweet)
              
         self.tweet_file.write(theTweet + ",\n")
