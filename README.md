@@ -21,7 +21,7 @@ from the user location.
 
 TweetToMap.js will read in the 'q.json' file and add marker/s to the relevant tweet/s with relevant information. "
 
-## elastic search setup:
+## Elastic search setup:
 1) download elastic search from: https://www.elastic.co/downloads/elasticsearch
 2) navigate to the /bin folder
 3) run 
@@ -32,7 +32,7 @@ TweetToMap.js will read in the 'q.json' file and add marker/s to the relevant tw
 ```
 pip install elasticsearch-loader
 ```
-5) Configure the mapping for geo_points
+5) Configure the mapping for geo_points:
 -do this before indexing any data so that elastic search can read geo_points
 ```
 curl -H "Content-Type: application/json" -XPUT "http://localhost:9200/index" -d \
@@ -49,12 +49,12 @@ curl -H "Content-Type: application/json" -XPUT "http://localhost:9200/index" -d 
 }'
 ```
 
-6) index the json file:
+6) Index the json file:
 ```
 elasticsearch_loader --index index --type tweet json [file with your tweets]
 ```
 
-7) Make a query
+7) Make a query:
 The following example query will search for all tweets containing the term "bedroom" within a 200km radius of the specified coordinate. 
 ```
 curl -H "Content-Type: application/json" -XPOST "http://localhost:9200/index/_search" -d \
